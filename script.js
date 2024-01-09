@@ -31,10 +31,13 @@ let shopitems = [
   },
 ];
 
+
+
 let str = "";
 
 function showLists() {
   str = "";
+  
   for (val of shopitems) {
     str += `<div class="card mx-3 px-2 py-2" style="width: 18rem;">
     <img src=${val.img} class="card-img-top" alt="...">
@@ -42,11 +45,12 @@ function showLists() {
     <h5 class="card-title">${val.title}</h5>
     <p class="card-text">${val.desc}</p>
     <h4 class="card-text">${val.price}</h4>
-    <button onclick="onAddCart(${val.id})" class="btn btn-primary">AddToCart</button>
+    <button id="addCart" onclick="onAddCart(${val.id})" class="btn btn-primary">Add to Cart</button>
     </div>
 </div>`;
     container.innerHTML = str;
   }
+  
   const heading = document.getElementById("heading");
   if (heading) {
     heading.remove();
@@ -60,12 +64,25 @@ const cartbtn = document.getElementById("cart-btn");
 let index = 0;
 
 let shopCart = [];
+let cartAdd = true;
 
 function onAddCart(i) {
   shopCart.push(shopitems[i]);
   index++;
   cartbtn.classList.add("active");
   cartbtn.textContent = index;
+  goToCart(i)
+}
+
+
+
+
+function goToCart(i){
+  if(cartAdd){
+    const addcartbtn = document.querySelectorAll('#addCart');
+    addcartbtn[i].innerHTML = "Go to Cart";
+    addcartbtn[i].disabled = true;
+  }
 }
 
 const cartDetails = document.getElementById("cartDetails");
@@ -73,7 +90,7 @@ const cartDetails = document.getElementById("cartDetails");
 
 cartDetails.addEventListener("click", showCart);
 
-function iterateCart() {
+function iterateCart(shopCart) {
   str = "";
   for (cart of shopCart) {
     str += `<div class="card mx-3 px-2 py-2" style="width: 18rem;">
@@ -101,7 +118,7 @@ function showCart() {
     container.innerHTML = heading;
   } 
   else {
-    iterateCart();
+    iterateCart(shopCart);
     let heading = document.createElement("h1");
     heading.id = "heading";
 
@@ -123,22 +140,26 @@ function showCart() {
 
 Home.addEventListener("click", () => {
   showLists();
+  
   cartDetails.disabled = false;
 });
 
 
+
+
 function onRemoveCart(i) {
-  console.log(i);
+  // console.log(i);
   shopCart = shopCart.filter(cart => cart.id !== i);
   if(shopCart.length <= 4){
-    iterateCart();
+    iterateCart(shopCart);
     
+    // price logic
     const heading = document.getElementById("heading");
     const prices = document.querySelectorAll(".price");
 
     let priceheading = "";
 
-    prices.forEach((price) => {
+    prices.forEach(price => {
       let replacecomma = price.textContent.replace(",", "");
       priceheading = parseInt(priceheading + parseInt(replacecomma.slice(2)));
     });
