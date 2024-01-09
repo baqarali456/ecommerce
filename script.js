@@ -78,6 +78,8 @@ function onAddCart(i) {
 
 
 function goToCart(i){
+  //  console.log(cartAdd);
+   
   if(cartAdd){
     const addcartbtn = document.querySelectorAll('#addCart');
     addcartbtn[i].innerHTML = "Go to Cart";
@@ -148,9 +150,26 @@ Home.addEventListener("click", () => {
 
 
 function onRemoveCart(i) {
-  // console.log(i);
+  console.log(i);
+  index--;
+  if(index == 0){
+    cartbtn.classList.remove("active");
+    
+  }
+  else{
+    cartbtn.classList.add("active");
+    cartbtn.textContent = index;
+  }
   shopCart = shopCart.filter(cart => cart.id !== i);
-  if(shopCart.length <= 4){
+  if(shopCart.length === 0){
+    let heading = "";
+    heading = "<h1>No Items In Cart</h1>";
+    container.innerHTML = heading;
+    cartDetails.disabled = true;
+    const headings = document.getElementById("heading");
+    headings.classList.add("noactive");
+  }
+ else{
     iterateCart(shopCart);
     
     // price logic
@@ -166,12 +185,7 @@ function onRemoveCart(i) {
 
     heading.innerText = `Total Price is Rs ${priceheading}`;
   }
-  else{
-    let heading = "";
-    heading = "<h1>No Items In Cart</h1>";
-    container.innerHTML = heading;
-    cartDetails.disabled = true;
-  }  
+    
 }
 
 
