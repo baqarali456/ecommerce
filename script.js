@@ -31,161 +31,154 @@ let shopitems = [
   },
 ];
 
-
-
 let str = "";
 
 function showLists() {
   str = "";
-  
-  for (val of shopitems) {
-    str += `<div class="card mx-3 px-2 py-2" style="width: 18rem;">
-    <img src=${val.img} class="card-img-top" alt="...">
-    <div class="card-body">
-    <h5 class="card-title">${val.title}</h5>
-    <p class="card-text">${val.desc}</p>
-    <h4 class="card-text">${val.price}</h4>
-    <button id="addCart" onclick="onAddCart(${val.id})" class="btn btn-primary">Add to Cart</button>
-    </div>
-</div>`;
-    container.innerHTML = str;
+  for (list of shopitems) {
+    const { id, img, title, desc, price } = list;
+    str += `
+            <div class="card mx-2 px-2" style="width: 18rem;">
+              <img src=${img} class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">${title}</h5>
+                  <p class="card-text">${desc}</p>
+                  <p class="card-text">${price}</p>
+                  <button  onclick="onAddCart(${id})" class="goToCart btn btn-primary">Add Cart</button>
+                </div>
+            </div>
+          `;
   }
-  
-  const heading = document.getElementById("heading");
-  if (heading) {
+  container.innerHTML = str;
+  const goToCart = document.querySelectorAll('.goToCart');
+  goToCart.forEach(cart=>{
+   console.log(cart.classList.contains('save-cart'));
+   
+  })
+  const heading = document.getElementById('heading');
+  if(heading){
     heading.remove();
   }
 }
 
+// rendering lists;
 showLists();
 
-const cartbtn = document.getElementById("cart-btn");
+// onclick on add cart
 
 let index = 0;
-
-let shopCart = [];
-let cartAdd = true;
-
-function onAddCart(i) {
-  shopCart.push(shopitems[i]);
+let AddedCart = [];
+function onAddCart(i){
   index++;
-  cartbtn.classList.add("active");
-  cartbtn.textContent = index;
-  goToCart(i)
-}
-
-
-
-
-function goToCart(i){
-  //  console.log(cartAdd);
-   
-  if(cartAdd){
-    const addcartbtn = document.querySelectorAll('#addCart');
-    addcartbtn[i].innerHTML = "Go to Cart";
-    addcartbtn[i].disabled = true;
-  }
-}
-
-const cartDetails = document.getElementById("cartDetails");
-// console.log(cartDetails);
-
-cartDetails.addEventListener("click", showCart);
-
-function iterateCart(shopCart) {
-  str = "";
-  for (cart of shopCart) {
-    str += `<div class="card mx-3 px-2 py-2" style="width: 18rem;">
-        <img src=${cart.img} class="card-img-top" alt="...">
-        <div class="card-body">
-        <h5 class="card-title">${cart.title}</h5>
-        <p class="card-text">${cart.desc}</p>
-        <h4 class="price" class="card-text">${cart.price}</h4>
-        <button onclick="onRemoveCart(${cart.id})" class="btn btn-danger">Remove Item</button>
-
-        </div>
-        </div>
-        `;
-    container.innerHTML = str;
-    
-    
-  }
-}
-
-function showCart() {
+  const notification = document.querySelector('.notification');
+  notification.innerText = index;
+  notification.classList.add('active');
+  const goToCart = document.querySelectorAll('.goToCart');
+  goToCart[i].innerHTML = "Go To Cart";
+  goToCart[i].classList.add('save-cart')
+  goToCart[i].disabled = "true";
+  AddedCart.push(shopitems[i]);
   
-  if (shopCart.length === 0) {
-    let heading = "";
-    heading = "<h1>No Items In Cart</h1>";
-    container.innerHTML = heading;
-  } 
-  else {
-    iterateCart(shopCart);
-    let heading = document.createElement("h1");
-    heading.id = "heading";
-
-    const prices = document.querySelectorAll(".price");
-
-    let priceheading = "";
-
-    prices.forEach((price) => {
-      let replacecomma = price.textContent.replace(",", "");
-      priceheading = parseInt(priceheading + parseInt(replacecomma.slice(2)));
-    });
-
-    heading.innerText = `Total Price is Rs ${priceheading}`;
-    container.after(heading);
-    heading.classList.remove("noactive");
-  }
-  cartDetails.disabled = true;
 }
 
-Home.addEventListener("click", () => {
-  showLists();
-  
-  cartDetails.disabled = false;
-});
+// show Cart Items;
 
+const cartDetails = document.getElementById('cartDetails');
 
-
-
-function onRemoveCart(i) {
-  console.log(i);
-  index--;
-  if(index == 0){
-    cartbtn.classList.remove("active");
-    
+cartDetails.addEventListener('click',()=>{
+  if(AddedCart.length === 0){
+    let h2 = document.createElement('h2');
+    h2.innerHTML = `No Items in Cart` ;
+    container.innerHTML = "";
+    container.appendChild(h2)
+    cartDetails.disabled = true;
   }
   else{
-    cartbtn.classList.add("active");
-    cartbtn.textContent = index;
-  }
-  shopCart = shopCart.filter(cart => cart.id !== i);
-  if(shopCart.length === 0){
-    let heading = "";
-    heading = "<h1>No Items In Cart</h1>";
-    container.innerHTML = heading;
+    showCart(AddedCart);
+    pricesCalculate();
     cartDetails.disabled = true;
-    const headings = document.getElementById("heading");
-    headings.classList.add("noactive");
   }
- else{
-    iterateCart(shopCart);
-    
-    // price logic
-    const heading = document.getElementById("heading");
-    const prices = document.querySelectorAll(".price");
+});
 
-    let priceheading = "";
-
-    prices.forEach(price => {
-      let replacecomma = price.textContent.replace(",", "");
-      priceheading = parseInt(priceheading + parseInt(replacecomma.slice(2)));
-    });
-
-    heading.innerText = `Total Price is Rs ${priceheading}`;
+function showCart(carts){
+  str = "";
+  for (cart of carts) {
+    const { id, img, title, desc, price } = cart;
+    str += `
+            <div class="card mx-2 px-2" style="width: 18rem;">
+              <img src=${img} class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">${title}</h5>
+                  <p class="card-text">${desc}</p>
+                  <p class="card-prices card-text">${price}</p>
+                  <button onclick="onremoveCart(${id})" class="btn btn-primary">Remove Item</button>
+                </div>
+            </div>
+          `;
   }
-    
+  container.innerHTML = str;
+  
+  
+  
 }
 
+ // price calculate in Cart
+function pricesCalculate(){
+  const heading = document.createElement('h1');
+  heading.id = "heading";
+  const cardPrices = document.querySelectorAll('.card-prices');
+  let priceheading = "";
+  cardPrices.forEach(price=>{
+    let costPrices = price.innerText.slice(2).replace(',',"")
+    priceheading = parseInt(priceheading + parseInt(costPrices));
+    
+  })
+  heading.innerText = `Your Total amount is ${priceheading}`;
+  container.after(heading);
+}
 
+// addEventListener click on Home;
+
+const Home = document.getElementById('Home');
+Home.addEventListener('click',()=>{
+  
+  showLists();
+  cartDetails.disabled = false;
+})
+
+
+// onclick on onremoveCart
+
+function onremoveCart(id){
+   index--;
+   const notification = document.querySelector('.notification');
+   if(index === 0){
+     notification.classList.remove('active');
+   }
+   else{
+    notification.innerText = index;
+    notification.classList.add('active');
+   }
+   AddedCart = AddedCart.filter(item=>item.id !== id);
+   if(AddedCart.length === 0){
+    let h2 = document.createElement('h2');
+    h2.innerHTML = `No Items in Cart` ;
+    container.innerHTML = "";
+    container.appendChild(h2)
+    const heading = document.querySelectorAll('h1');
+    heading.forEach((head)=>head.remove());
+   }
+   else{
+     showCart(AddedCart);
+     const heading = document.getElementById("heading");
+     const cardPrices = document.querySelectorAll('.card-prices');
+     let priceheading = "";
+     cardPrices.forEach(price=>{
+       let costPrices = price.innerText.slice(2).replace(',',"")
+       priceheading = parseInt(priceheading + parseInt(costPrices));
+       
+     })
+     heading.innerText = `Your Total amount is ${priceheading}`;
+   }
+  
+}
