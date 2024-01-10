@@ -25,7 +25,7 @@ let shopitems = [
   {
     id: 3,
     img: "images/s22.webp",
-    title: "Samsung S22 5G",
+    title: "Samsung S22 5giG",
     desc: "6 GB RAM | 128 GB ROM | Expandable Upto 1 TB",
     price: "Rs 27,999",
   },
@@ -38,23 +38,18 @@ function showLists() {
   for (list of shopitems) {
     const { id, img, title, desc, price } = list;
     str += `
-            <div class="card mx-2 px-2" style="width: 18rem;">
+            <div  class="card mx-2 px-2" style="width: 18rem;">
               <img src=${img} class="card-img-top" alt="...">
-                <div class="card-body">
+                <div  class="card-body">
                   <h5 class="card-title">${title}</h5>
                   <p class="card-text">${desc}</p>
                   <p class="card-text">${price}</p>
-                  <button  onclick="onAddCart(${id})" class="goToCart btn btn-primary">Add Cart</button>
+                  <button onclick="onAddCart(${id})" class="addCart btn btn-primary">Add Cart</button>
                 </div>
             </div>
           `;
   }
   container.innerHTML = str;
-  const goToCart = document.querySelectorAll('.goToCart');
-  goToCart.forEach(cart=>{
-   console.log(cart.classList.contains('save-cart'));
-   
-  })
   const heading = document.getElementById('heading');
   if(heading){
     heading.remove();
@@ -73,10 +68,14 @@ function onAddCart(i){
   const notification = document.querySelector('.notification');
   notification.innerText = index;
   notification.classList.add('active');
-  const goToCart = document.querySelectorAll('.goToCart');
-  goToCart[i].innerHTML = "Go To Cart";
-  goToCart[i].classList.add('save-cart')
-  goToCart[i].disabled = "true";
+  const btnCart = document.querySelectorAll('.addCart');
+  btnCart.forEach((cart,idx)=>{
+    if(idx === i){
+      cart.classList.add('gotocart');
+      cart.innerHTML = "Go To Cart";
+      cart.disabled = true;
+    }
+  })
   AddedCart.push(shopitems[i]);
   
 }
@@ -127,11 +126,11 @@ function pricesCalculate(){
   const heading = document.createElement('h1');
   heading.id = "heading";
   const cardPrices = document.querySelectorAll('.card-prices');
-  let priceheading = "";
-  cardPrices.forEach(price=>{
-    let costPrices = price.innerText.slice(2).replace(',',"")
-    priceheading = parseInt(priceheading + parseInt(costPrices));
-    
+  let priceheading = 0;
+     cardPrices.forEach(price=>{
+       let costPrices = price.innerText.slice(2).replace(',',"")
+       priceheading +=  parseInt(costPrices);
+       
   })
   heading.innerText = `Your Total amount is ${priceheading}`;
   container.after(heading);
@@ -172,10 +171,10 @@ function onremoveCart(id){
      showCart(AddedCart);
      const heading = document.getElementById("heading");
      const cardPrices = document.querySelectorAll('.card-prices');
-     let priceheading = "";
+     let priceheading = 0;
      cardPrices.forEach(price=>{
        let costPrices = price.innerText.slice(2).replace(',',"")
-       priceheading = parseInt(priceheading + parseInt(costPrices));
+       priceheading +=  parseInt(costPrices);
        
      })
      heading.innerText = `Your Total amount is ${priceheading}`;
